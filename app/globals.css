@@ -1,0 +1,233 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@import url('https://fonts.googleapis.com/css2?family=Pacifico&display=swap');
+body {
+  font-family:'Open Sans';
+}
+*{
+  font-family: 'Montserrat';
+}
+@font-face {
+    font-family: 'Pacifico';
+    src: url('./components/fonts/Pacifico-Regular.woff') format('woff2'),
+        url('./components/fonts/Pacifico-Regular.woff2') format('woff');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+/* Roboto */
+@font-face {
+    font-family: 'Roboto';
+    src: local('Roboto'), url('./components/fonts/Roboto-Regular.woff2') format('woff2'),
+        url('./components/fonts/Roboto-Regular.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+/* Montserrat */
+@font-face {
+    font-family: 'Montserrat';
+    src: local('Montserrat'), url('./components/fonts/Montserrat-Regular.woff2') format('woff2'),
+        url('./components/fonts/Montserrat-Regular.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+/* Open Sans */
+@font-face {
+    font-family: 'Open Sans';
+    src: local('Open Sans'), url('./components/fonts/OpenSans-Regular.woff2') format('woff2'),
+        url('./components/fonts/OpenSans-Regular.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+/* Playfair Display */
+@font-face {
+    font-family: 'Playfair Display';
+    src: local('Playfair Display'), url('./components/fonts/PlayfairDisplay-Regular.woff2') format('woff2'),
+        url('./components/fonts/PlayfairDisplay-Regular.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+/* Merriweather */
+@font-face {
+    font-family: 'Merriweather';
+    src: local('Merriweather'), url('./components/fonts/Merriweather-Regular.woff2') format('woff2'),
+        url('./components/fonts/Merriweather-Regular.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+/* Roboto Slab */
+@font-face {
+    font-family: 'Roboto Slab';
+    src: local('Roboto Slab'), url('./components/fonts/RobotoSlab-Regular.woff2') format('woff2'),
+        url('./components/fonts/RobotoSlab-Regular.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+/* Lobster */
+@font-face {
+    font-family: 'Lobster';
+    src: local('Lobster'), url('./components/fonts/Lobster-Regular.woff2') format('woff2'),
+        url('./components/fonts/Lobster-Regular.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+
+/* Courier New */
+@font-face {
+    font-family: 'Courier New';
+    src: local('Courier New'), url('./components/fonts/CourierPrime-Regular.woff2') format('woff2'),
+        url('./components/fonts/CourierPrime-Regular.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+.global-settings-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+  }
+  
+  .layout-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100px;
+    margin-bottom: 8px;
+    background-color: #f0f0f0;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .layout-button.active, .layout-button:hover {
+    background-color: #000;
+    color: #fff;
+  }
+  
+  .rectangle.long {
+    height: 50%;
+    width: 60%;
+    background-color: currentColor;
+    margin: 2%;
+  }
+  
+  .rectangle.short {
+    height: 50%;
+    width: 20%;
+    background-color: currentColor;
+    margin: 2%;
+  }
+  
+  .rectangle.vertical {
+    height: calc(100% - 4%);
+    width: 50%;
+  }
+  
+  .layout-button.horizontalLeft {
+    flex-direction: row;
+  }
+  
+  .layout-button.horizontalRight {
+    flex-direction: row-reverse;
+  }
+  
+  .layout-button.verticalTop {
+    flex-direction: column;
+    justify-content: flex-start;
+  }
+  
+  .layout-button.verticalBottom {
+    flex-direction: column-reverse;
+    justify-content: flex-end;
+  }
+  .global-settings-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+  }
+  
+  .layout-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100px;
+    margin-bottom: 8px;
+    background-color: #f0f0f0;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .layout-button.active, .layout-button:hover {
+    background-color: #000;
+    color: #fff;
+  }
+  
+  .rectangle {
+    background-color: currentColor;
+    transition: background-color 0.3s;
+  }
+  
+  .long, .short {
+    width: 100%; /* Full width to match the button's width */
+  }
+  
+  .long {
+    height: 70%; /* Larger rectangle takes more space */
+  }
+  
+  .short {
+    height: 30%; /* Smaller rectangle takes less space */
+  }
+  
+  .layout-button.horizontalLeft, .layout-button.horizontalRight {
+    flex-direction: row;
+  }
+  
+  .layout-button.horizontalRight {
+    flex-direction: row-reverse;
+  }
+  
+  .layout-button.verticalTop, .layout-button.verticalBottom {
+    flex-direction: column;
+    align-items: center; /* Center align to match the design */
+  }
+  
+  .layout-button.verticalTop {
+    justify-content: flex-start; /* Aligns content to the top */
+  }
+  
+  .layout-button.verticalBottom {
+    flex-direction: column-reverse; /* Reverses the order of the flex items */
+    justify-content: flex-end; /* Aligns content to the bottom */
+  }
+    
+  .input {
+    width: 100%;
+    max-width: 220px;
+    height: 45px;
+    padding: 12px;
+    border-radius: 12px;
+    border: 1.5px solid lightgrey;
+    outline: none;
+    transition: all 0.3s cubic-bezier(0.19, 1, 0.22, 1);
+    box-shadow: 0px 0px 20px -18px;
+  }
+  
+  .input:hover {
+    border: 2px solid lightgrey;
+    box-shadow: 0px 0px 20px -17px;
+  }
+  
+  .input:active {
+    transform: scale(0.95);
+  }
+  
+  .input:focus {
+    border: 2px solid grey;
+  }
