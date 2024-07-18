@@ -577,6 +577,7 @@ const ModularBusinessCardStudio: React.FC<ModularBusinessCardStudioProps> = ({
     id: string
   ) => {
     e.preventDefault();
+    e.stopPropagation();
     const element = state[activeSide].elements.find((el) => el.id === id);
     if (element) {
       const cardRect = cardRef.current?.getBoundingClientRect();
@@ -603,6 +604,7 @@ const ModularBusinessCardStudio: React.FC<ModularBusinessCardStudioProps> = ({
   const handleInteractionMove = useCallback(
     (e: MouseEvent | TouchEvent) => {
       if (dragging && selectedElement) {
+        e.preventDefault();
         const cardRect = cardRef.current?.getBoundingClientRect();
         if (cardRect) {
           let clientX, clientY;
@@ -632,22 +634,22 @@ const ModularBusinessCardStudio: React.FC<ModularBusinessCardStudioProps> = ({
   }, []);
 
   useEffect(() => {
-    if (dragging) {
-      addEventListener("mousemove", handleInteractionMove);
-      addEventListener("mouseup", handleInteractionEnd);
-      addEventListener("touchmove", handleInteractionMove);
-      addEventListener("touchend", handleInteractionEnd);
-    } else {
-      removeEventListener("mousemove", handleInteractionMove);
-      removeEventListener("mouseup", handleInteractionEnd);
-      removeEventListener("touchmove", handleInteractionMove);
-      removeEventListener("touchend", handleInteractionEnd);
+    const cardElement = cardRef.current;
+    if (cardElement) {
+      cardElement.addEventListener("touchmove", handleInteractionMove, {
+        passive: false,
+      });
+      cardElement.addEventListener("touchend", handleInteractionEnd);
+      cardElement.addEventListener("mousemove", handleInteractionMove);
+      cardElement.addEventListener("mouseup", handleInteractionEnd);
     }
     return () => {
-      removeEventListener("mousemove", handleInteractionMove);
-      removeEventListener("mouseup", handleInteractionEnd);
-      removeEventListener("touchmove", handleInteractionMove);
-      removeEventListener("touchend", handleInteractionEnd);
+      if (cardElement) {
+        cardElement.removeEventListener("touchmove", handleInteractionMove);
+        cardElement.removeEventListener("touchend", handleInteractionEnd);
+        cardElement.removeEventListener("mousemove", handleInteractionMove);
+        cardElement.removeEventListener("mouseup", handleInteractionEnd);
+      }
     };
   }, [dragging, handleInteractionMove, handleInteractionEnd]);
 
