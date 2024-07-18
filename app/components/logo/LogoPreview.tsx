@@ -2,9 +2,9 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
-import Icon from '@mdi/react';
 import domtoimage from 'dom-to-image';
 import { useLogoContext } from '../logocontext';
+import Icon from '@mdi/react';
 
 interface LogoPreviewProps {
   icon: { library: 'FontAwesome' | 'MDI'; icon: IconDefinition | string };
@@ -201,7 +201,7 @@ const LogoPreview: React.FC<LogoPreviewProps> = ({
     return effect + ' drop-shadow(0px 2px 2px #474747)';
   };
 
-  const handleDownload = (ref: React.RefObject<HTMLDivElement>, filename: string): void => {
+  const exportToImage = (ref: React.RefObject<HTMLDivElement>, filename: string): void => {
     if (ref.current) {
       const scale = 5;
       const options = {
@@ -214,14 +214,17 @@ const LogoPreview: React.FC<LogoPreviewProps> = ({
           height: `${ref.current.clientHeight}px`,
         },
       };
-
-      domtoimage.toBlob(ref.current, options).then((blob: Blob) => {
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = filename;
-        a.click();
-      });
+  
+      domtoimage.toPng(ref.current, options)
+        .then((dataUrl: string) => {
+          const link = document.createElement('a');
+          link.download = filename;
+          link.href = dataUrl;
+          link.click();
+        })
+        .catch((error: Error) => {
+          console.error('Error exporting image:', error);
+        });
     }
   };
 
@@ -411,13 +414,13 @@ const LogoPreview: React.FC<LogoPreviewProps> = ({
                 Save Logo
               </button>
               <button
-                onClick={() => handleDownload(previewRef, 'logo-preview.png')}
+                onClick={() => exportToImage(previewRef, 'logo-preview.png')}
                 className="px-3 py-1 sm:px-4 sm:py-2 text-sm sm:text-base bg-green-500 text-white rounded hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50"
               >
                 Download Full Logo
               </button>
               <button
-                onClick={() => handleDownload(iconPreviewRef, 'logo-icon.png')}
+                onClick={() => exportToImage(iconPreviewRef, 'logo-icon.png')}
                 className="px-3 py-1 sm:px-4 sm:py-2 text-sm sm:text-base bg-purple-500 text-white rounded hover:bg-purple-600 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-opacity-50"
               >
                 Download Icon

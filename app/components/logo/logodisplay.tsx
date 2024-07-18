@@ -166,56 +166,7 @@ const LogoPreview: React.FC<LogoPreviewProps> = ({
     return effect + ' drop-shadow(0px 2px 2px #474747)';
   };
 
-  const handleDownload = (ref: React.RefObject<HTMLDivElement>, filename: string) => {
-    if (ref.current) {
-      const scale = 5; 
-      const options = {
-        width: ref.current.clientWidth * scale,
-        height: ref.current.clientHeight * scale,
-        style: {
-          transform: `scale(${scale})`,
-          transformOrigin: 'top left',
-          width: `${ref.current.clientWidth}px`,
-          height: `${ref.current.clientHeight}px`,
-        }
-      };
 
-      domtoimage.toBlob(ref.current, options)
-        .then((blob: Blob) => {
-          const url = window.URL.createObjectURL(blob);
-          const a = document.createElement('a');
-          a.href = url;
-          a.download = filename;
-          a.click();
-        });
-    }
-  };
-
-  const handleSave = () => {
-    if (previewRef.current) {
-      const scale = 5;
-      const options = {
-        width: previewRef.current.clientWidth * scale,
-        height: previewRef.current.clientHeight * scale,
-        style: {
-          transform: `scale(${scale})`,
-          transformOrigin: 'top left',
-          width: `${previewRef.current.clientWidth}px`,
-          height: `${previewRef.current.clientHeight}px`,
-        }
-      };
-  
-      domtoimage.toPng(previewRef.current, options).then((dataUrl: string) => {
-        if (currentLogoIndex !== null) {
-          editLogo(currentLogoIndex, dataUrl);
-        } else {
-          addLogo(dataUrl);
-        }
-        setShowSnackbar(true);
-        setTimeout(() => setShowSnackbar(false), 2000);
-      });
-    }
-  };
 
   const renderIcon = () => (
     <div style={{paddingInline:logobgpaddingx,paddingBlock:logobgpaddingy,background:logobgcolor,borderRadius:logobgborderradius,}}>

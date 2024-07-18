@@ -1,19 +1,10 @@
-"use client";
-import { BusinessCardProvider } from "./components/businesscard/bussiness";
-import Form from "./components/Form";
-import { LogoProvider } from "./components/logocontext";
+import dynamic from "next/dynamic";
+const Form = dynamic(() => import("./components/Form"), { ssr: false });
 
 export default function Home() {
   return (
     <main>
-          
-
-         <BusinessCardProvider>
-
-<LogoProvider>
-<Form />
-</LogoProvider>
-</BusinessCardProvider>
+      <Form />
     </main>
   );
 }

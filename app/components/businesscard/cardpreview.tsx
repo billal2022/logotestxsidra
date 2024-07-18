@@ -1,14 +1,10 @@
 import React, { RefObject } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Icon from '@mdi/react';
+
 import QRCode from 'qrcode.react';
 import { CardElement } from '../types';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-interface IconType {
-  name: string;
-  library: 'FontAwesome' | 'MDI';
-  icon: any;
-}
 
 interface CardPreviewProps {
   elements: CardElement[];
@@ -39,6 +35,7 @@ const CardPreview: React.FC<CardPreviewProps> = ({
   LogoDisplay,
   logoScale
 }) => {
+  
   const renderElement = (element: CardElement) => {
     const commonStyle = {
       transform: `rotate(${element.props.rotation || 0}deg)`,
@@ -129,22 +126,22 @@ const CardPreview: React.FC<CardPreviewProps> = ({
         return null;
     }
   };
+
   const backgroundStyle = () => {
     if (backgroundImage) {
       if (backgroundImage.trim().startsWith('<svg')) {
-        // If the backgroundImage starts with <svg, it's an SVG string
         return `url("data:image/svg+xml,${encodeURIComponent(backgroundImage)}")`;
       } else {
-        // Otherwise, treat it as a regular image URL
         return `url("${backgroundImage}")`;
       }
     }
     return 'none';
   };
+
   return (
     <div
       ref={cardRef}
-      className={`w-[3.5in] h-[2in] bg-white shadow-lg relative`}
+      className="w-[3.5in] h-[2in] bg-white shadow-lg relative"
       style={{
         backgroundColor: backgroundColor,
         backgroundImage: backgroundStyle(),

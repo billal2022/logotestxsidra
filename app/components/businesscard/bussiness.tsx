@@ -1,11 +1,11 @@
 "use client";
 import React, { useState, useRef, useCallback, useEffect, createContext, useContext } from 'react';
-import html2canvas from 'html2canvas';
 import CardPreview from './cardpreview';
 import CardEditor from './busniesssettings';
 import { CardElement } from '../types';
 import { generateCreativeProfessionalBackground, svgTemplates } from './svgbg';
 import domtoimage from 'dom-to-image';
+import defaultImage from '/public/default-thumbnail.jpg'; // Adjust the path as necessary
 
 
 const uniqueId = () => `element-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
@@ -364,7 +364,7 @@ const ModularBusinessCardStudio: React.FC<ModularBusinessCardStudioProps> = ({ m
           color: '#000000',
           backgroundColor: type === 'shape' ? '#0066cc' : undefined,
           borderRadius: type === 'shape' ? 0 : undefined,
-          src: type === 'image' ? 'https://via.placeholder.com/150' : undefined,
+          src: type === 'image' ? defaultImage.src : undefined,
           qrBackground: '#ffffff',
           size: 100,
           rotation: 0,
@@ -399,15 +399,15 @@ const ModularBusinessCardStudio: React.FC<ModularBusinessCardStudioProps> = ({ m
     }));
     setSelectedElement(newElement.id);
   };
-    const updateElement = (id: string, props: Partial<CardElement['props']>) => {
-      setState(prevState => ({
-        ...prevState,
-        [activeSide]: {
-          ...prevState[activeSide],
-          elements: prevState[activeSide].elements.map(el => el.id === id ? { ...el, props: { ...el.props, ...props } } : el)
-        }
-      }));
-    };
+  const updateElement = useCallback((id: string, props: Partial<CardElement['props']>) => {
+    setState(prevState => ({
+      ...prevState,
+      [activeSide]: {
+        ...prevState[activeSide],
+        elements: prevState[activeSide].elements.map(el => el.id === id ? { ...el, props: { ...el.props, ...props } } : el)
+      }
+    }));
+  }, [activeSide, setState]);
   
     const deleteElement = (id: string) => {
       setState(prevState => ({
@@ -468,66 +468,108 @@ const ModularBusinessCardStudio: React.FC<ModularBusinessCardStudioProps> = ({ m
   
     useEffect(() => {
       if (dragging) {
-        window.addEventListener('mousemove', handleInteractionMove);
-        window.addEventListener('mouseup', handleInteractionEnd);
-        window.addEventListener('touchmove', handleInteractionMove);
-        window.addEventListener('touchend', handleInteractionEnd);
+        addEventListener('mousemove', handleInteractionMove);
+        addEventListener('mouseup', handleInteractionEnd);
+        addEventListener('touchmove', handleInteractionMove);
+        addEventListener('touchend', handleInteractionEnd);
       } else {
-        window.removeEventListener('mousemove', handleInteractionMove);
-        window.removeEventListener('mouseup', handleInteractionEnd);
-        window.removeEventListener('touchmove', handleInteractionMove);
-        window.removeEventListener('touchend', handleInteractionEnd);
+        removeEventListener('mousemove', handleInteractionMove);
+        removeEventListener('mouseup', handleInteractionEnd);
+        removeEventListener('touchmove', handleInteractionMove);
+        removeEventListener('touchend', handleInteractionEnd);
       }
       return () => {
-        window.removeEventListener('mousemove', handleInteractionMove);
-        window.removeEventListener('mouseup', handleInteractionEnd);
-        window.removeEventListener('touchmove', handleInteractionMove);
-        window.removeEventListener('touchend', handleInteractionEnd);
+        removeEventListener('mousemove', handleInteractionMove);
+        removeEventListener('mouseup', handleInteractionEnd);
+        removeEventListener('touchmove', handleInteractionMove);
+        removeEventListener('touchend', handleInteractionEnd);
       };
     }, [dragging, handleInteractionMove, handleInteractionEnd]);
 
     const exportToImage = async () => {
       const node = cardRef.current;
       if (node) {
-        const scale = 5; // Increase resolution
-        const style = {
-          transform: `scale(${scale})`,
-          transformOrigin: 'top left',
-          width: `${node.offsetWidth}px`,
-          height: `${node.offsetHeight}px`,
-        };
-    
-        const param = {
-          height: node.offsetHeight * scale,
-          width: node.offsetWidth * scale,
-          quality: 1,
-          style
-        };
+        const scale = 3; // Increase resolution
+        const width = node.offsetWidth * scale;
+        const height = node.offsetHeight * scale;
     
         try {
-          let dataUrl;
+          // Convert SVG background to PNG if present
           if (state[activeSide].backgroundImage && state[activeSide].backgroundImage.trim().startsWith('<svg')) {
-            // If the background is an SVG, use html2canvas
-            const canvas = await html2canvas(node, {
-              scale: scale,
-              useCORS: true,
-              backgroundColor: null,
-            });
-            dataUrl = canvas.toDataURL('image/png');
-          } else {
-            // For other cases, use domtoimage
-            dataUrl = await domtoimage.toPng(node, param);
-          }
+            const svgData = state[activeSide].backgroundImage;
+            const img = new Image();
+            const svgBlob = new Blob([svgData], {type: 'image/svg+xml;charset=utf-8'});
+            const svgUrl = URL.createObjectURL(svgBlob);
+            
+            img.onload = async () => {
+              URL.revokeObjectURL(svgUrl);
+              const canvas = document.createElement('canvas');
+              canvas.width = width;
+              canvas.height = height;
+              const ctx = canvas.getContext('2d');
+              
+              if (ctx) {
+                // Draw background color
+                ctx.fillStyle = state[activeSide].backgroundColor;
+                ctx.fillRect(0, 0, width, height);
     
-          const link = document.createElement('a');
-          link.download = `business-card-${activeSide}.png`;
-          link.href = dataUrl;
-          link.click();
+                // Draw SVG background
+                ctx.drawImage(img, 0, 0, width, height);
+    
+                // Convert background to data URL
+                const backgroundDataUrl = canvas.toDataURL('image/png');
+    
+                // Set background image of the node to the PNG data URL
+                node.style.backgroundImage = `url(${backgroundDataUrl})`;
+    
+                // Export the entire card
+                const dataUrl = await domtoimage.toPng(node, {
+                  width: width,
+                  height: height,
+                  style: {
+                    transform: `scale(${scale})`,
+                    transformOrigin: 'top left',
+                    width: `${node.offsetWidth}px`,
+                    height: `${node.offsetHeight}px`,
+                  }
+                });
+    
+                // Reset the background image of the node
+                node.style.backgroundImage = `url("data:image/svg+xml,${encodeURIComponent(svgData)}")`;
+    
+                // Create download link
+                const link = document.createElement('a');
+                link.download = `business-card-${activeSide}.png`;
+                link.href = dataUrl;
+                link.click();
+              }
+            };
+    
+            img.src = svgUrl;
+          } else {
+            // For non-SVG backgrounds, use domtoimage directly
+            const dataUrl = await domtoimage.toPng(node, {
+              width: width,
+              height: height,
+              style: {
+                transform: `scale(${scale})`,
+                transformOrigin: 'top left',
+                width: `${node.offsetWidth}px`,
+                height: `${node.offsetHeight}px`,
+              }
+            });
+    
+            const link = document.createElement('a');
+            link.download = `business-card-${activeSide}.png`;
+            link.href = dataUrl;
+            link.click();
+          }
         } catch (error) {
           console.error('Error exporting image:', error);
         }
       }
     };
+
     return (
       <div className="w-full h-full">
         {mode === 'preview' ? (
@@ -576,13 +618,13 @@ const ModularBusinessCardStudio: React.FC<ModularBusinessCardStudioProps> = ({ m
               </select>
             </div>
             <CardPreview
+            cardRef={cardRef}
   logoScale={logoScale}
   elements={state[activeSide].elements}
   backgroundImage={state[activeSide].backgroundImage}
   backgroundColor={state[activeSide].backgroundColor}
   overlayColor={state[activeSide].overlayColor}
   overlayOpacity={state[activeSide].overlayOpacity}
-  cardRef={cardRef}  // Make sure this prop is passed
   handleInteractionStart={handleInteractionStart}
   selectedElement={selectedElement}
   dragging={dragging}
